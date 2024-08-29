@@ -2,6 +2,7 @@ package se331.lab.rest.entity;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 
 @Data
 @Builder
@@ -13,6 +14,6 @@ public class Event {
     String location;
     String date;
     String time;
-    Boolean petAllowed;
+    Boolean petsAllowed;
     String organizer;
 }
