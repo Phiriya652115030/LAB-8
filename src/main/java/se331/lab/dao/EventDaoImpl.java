@@ -14,7 +14,6 @@ public class EventDaoImpl implements EventDao {
     @PostConstruct
     public void init() {
         eventList = new ArrayList<>();
-
         eventList.add(Event.builder()
                 .id(123L)
                 .category("animal welfare")
@@ -112,11 +111,12 @@ public class EventDaoImpl implements EventDao {
                 .organizer("Brody Kill")
                 .build());
     }
-
+    @Override
     public Integer getEventSize() {
         return eventList.size();
     }
 
+    @Override
     public List<Event> getEvents(Integer pageSize, Integer page) {
         pageSize = pageSize == null ? eventList.size() : pageSize;
         page = page == null ? 1 : page;
@@ -128,6 +128,7 @@ public class EventDaoImpl implements EventDao {
         return output;
     }
 
+    @Override
     public Event getEventById(Long id) {
         Event output = null;
         for (Event event : eventList) {
