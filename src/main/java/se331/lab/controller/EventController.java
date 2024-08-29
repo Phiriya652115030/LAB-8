@@ -50,7 +50,7 @@ public class EventController {
     @GetMapping("events/{id}")
     public ResponseEntity<?> getEvent(@PathVariable("id") Long id) {
         // Fetching a single event by id using the service
-        Event output = eventService.getEvent(id);
+        Event output = eventService.getEventById(id);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
