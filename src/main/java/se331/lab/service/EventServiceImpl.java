@@ -25,4 +25,9 @@ public class EventServiceImpl implements EventService {
     public Event getEventById(Long id) {
         return eventDao.getEventById(id);
     }
+
+    @Override
+    public Event save(Event event) {
+        return eventDao.saveEvent(event);
+    }
 }
