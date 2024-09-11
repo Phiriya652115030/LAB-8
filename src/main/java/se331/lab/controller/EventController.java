@@ -31,14 +31,11 @@ public class EventController {
         perPage = perPage == null ? eventService.getEventSize() : perPage;
         page = page == null ? 1 : page;
 
-        // Fetch paginated events using EventService
         Page<Event> pageOutput = eventService.getEvents(perPage, page);
-
-        // Prepare the response header with the total count of elements
+        
         HttpHeaders responseHeader = new HttpHeaders();
         responseHeader.set("X-Total-Count", String.valueOf(pageOutput.getTotalElements()));
 
-        // Return the content of the page along with the response header
         return new ResponseEntity<>(pageOutput.getContent(),responseHeader, HttpStatus.OK);
     }
 
