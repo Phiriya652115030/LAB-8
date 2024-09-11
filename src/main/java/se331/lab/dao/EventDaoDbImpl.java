@@ -24,7 +24,7 @@ public class EventDaoDbImpl implements EventDao {
 
     @Override
     public Page<Event> getEvents(Integer pageSize, Integer page) {
-        return eventRepository.findAll(PageRequest.of(page, pageSize));
+        return eventRepository.findAll(PageRequest.of(page - 1, pageSize));
     }
 
     @Override

@@ -28,12 +28,18 @@ public class EventController {
             @RequestParam(value = "_limit", required = false) Integer perPage,
             @RequestParam(value = "_page", required = false) Integer page) {
 
-        Page<Event> pageOutput = eventService.getEvents(perPage, page);
-        HttpHeaders responseHeader = new HttpHeaders();
+        perPage = perPage == null ? eventService.getEventSize() : perPage;
+        page = page == null ? 1 : page;
 
-        responseHeader.set("x-total-count",
-                String.valueOf(pageOutput.getTotalElements()));
-        return new ResponseEntity<>(pageOutput.getContent(), responseHeader, HttpStatus.OK);
+        // Fetch paginated events using EventService
+        Page<Event> pageOutput = eventService.getEvents(perPage, page);
+
+        // Prepare the response header with the total count of elements
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("X-Total-Count", String.valueOf(pageOutput.getTotalElements()));
+
+        // Return the content of the page along with the response header
+        return new ResponseEntity<>(pageOutput.getContent(),responseHeader, HttpStatus.OK);
     }
 
     @GetMapping("events/{id}")
