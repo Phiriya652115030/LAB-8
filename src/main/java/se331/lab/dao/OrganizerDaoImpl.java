@@ -1,5 +1,6 @@
 package se331.lab.dao;
 
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 import se331.lab.entity.Organizer;
 
@@ -49,5 +50,12 @@ public class OrganizerDaoImpl implements OrganizerDao {
                 .filter(organizer -> organizer.getId().equals(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public Organizer save(Organizer organizer) {
+        organizer.setId(organizerList.get(organizerList.size() - 1).getId() + 1);
+        organizerList.add(organizer);
+        return organizer;
     }
 }
