@@ -9,7 +9,7 @@ import se331.lab.service.OrganizerService;
 
 import java.util.List;
 
-@RestController  // <-- Use @RestController
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/organizers")
 public class OrganizerController {
