@@ -12,6 +12,7 @@ import se331.lab.entity.Event;
 
 import jakarta.annotation.PostConstruct;
 import se331.lab.service.EventService;
+import se331.lab.util.LabMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,9 @@ public class EventController {
         HttpHeaders responseHeader = new HttpHeaders();
         responseHeader.set("X-Total-Count", String.valueOf(pageOutput.getTotalElements()));
 
-        return new ResponseEntity<>(pageOutput.getContent(),responseHeader, HttpStatus.OK);
+        return new
+                ResponseEntity<>(LabMapper.INSTANCE.getEventDTO(pageOutput.getContent())
+                ,responseHeader, HttpStatus.OK);
     }
 
     @GetMapping("events/{id}")
@@ -42,7 +45,7 @@ public class EventController {
         // Fetching a single event by id using the service
         Event output = eventService.getEventById(id);
         if (output != null) {
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
         }
@@ -51,6 +54,6 @@ public class EventController {
     @PostMapping("/events")
     public ResponseEntity<?> addEvent(@RequestBody Event event) {
         Event output = eventService.save(event);
-        return ResponseEntity.ok(output);
+        return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
     }
 }
