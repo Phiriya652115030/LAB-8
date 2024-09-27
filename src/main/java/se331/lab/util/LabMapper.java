@@ -6,14 +6,21 @@ import se331.lab.entity.Event;
 import se331.lab.entity.EventDTO;
 import se331.lab.entity.Organizer;
 import se331.lab.entity.OrganizerDTO;
+import se331.lab.entity.Participant;       // Import Participant
+import se331.lab.entity.ParticipantDTO;    // Import ParticipantDTO
 
 import java.util.List;
 
 @Mapper
 public interface LabMapper {
     LabMapper INSTANCE = Mappers.getMapper(LabMapper.class);
+
     EventDTO getEventDTO(Event event);
     List<EventDTO> getEventDTO(List<Event> events);
+
     OrganizerDTO getOrganizerDTO(Organizer organizer);
     List<OrganizerDTO> getOrganizerDTO(List<Organizer> organizers);
+
+    ParticipantDTO toParticipantDTO(Participant participant);  // Mapping for Participant
+    List<ParticipantDTO> toParticipantDTOs(List<Participant> participants);  // List mapping
 }
