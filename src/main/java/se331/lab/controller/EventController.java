@@ -35,7 +35,7 @@ public class EventController {
         if (title == null) {
             pageOutput = eventService.getEvents(perPage, page);
         } else {
-            pageOutput = eventService.getEvents(title, PageRequest.of(page, perPage));
+            pageOutput = eventService.getEvents(title, PageRequest.of(page-1, perPage));
         }
 
 
