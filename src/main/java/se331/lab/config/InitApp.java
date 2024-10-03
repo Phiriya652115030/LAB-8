@@ -154,12 +154,6 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         tempEvent.setOrganizer(org3);
         org3.getOwnEvents().add(tempEvent);
 
-        createAuctionData();
-    }
-
-
-    private void createAuctionData() {
-        // Creating Auction Items
         AuctionItem item1 = new AuctionItem();
         item1.setName("Vintage Vase");
         item1.setDescription("A beautiful vintage vase from the 19th century.");
@@ -228,5 +222,7 @@ public class InitApp implements ApplicationListener<ApplicationReadyEvent> {
         // Saving auction items
         auctionItemRepository.saveAll(List.of(item1, item2, item3, item4, item5));
     }
+
+
 
 }
