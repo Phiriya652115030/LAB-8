@@ -1,19 +1,19 @@
 package se331.lab.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import se331.lab.entity.AuctionItem;
 import se331.lab.repository.AuctionItemRepository;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class AuctionItemService {
 
-    final AuctionItemRepository auctionItemRepository;
+public interface AuctionItemService {
 
-    public List<AuctionItem> getAllAuctionItems() {
-        return auctionItemRepository.findAll();
-    }
+    Page<AuctionItem> findByNameAndDescription(String name, String description, Pageable page);
+
+
+
 }

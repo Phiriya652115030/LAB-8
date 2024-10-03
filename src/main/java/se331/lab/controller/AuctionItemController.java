@@ -1,9 +1,12 @@
 package se331.lab.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import se331.lab.entity.AuctionItem;
 import se331.lab.entity.AuctionItemDTO; // Import the AuctionItemDTO
@@ -21,13 +24,16 @@ public class AuctionItemController {
     final AuctionItemService auctionItemService; // Use a service for business logic
 
     @GetMapping
-    public ResponseEntity<List<AuctionItemDTO>> getAllAuctionItems() {
-        List<AuctionItem> auctionItems = auctionItemService.getAllAuctionItems(); // Call the service method
+    public ResponseEntity<Page<AuctionItemDTO>> getAllAuctionItems(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String description,
+            Pageable pageable) {  // Add pagination
 
-        // Convert the list of auction items to DTOs
-        List<AuctionItemDTO> auctionItemDTOs = auctionItems.stream()
-                .map(item -> LabMapper.INSTANCE.getAuctionItemDTO(item)) // Convert to DTO
-                .collect(Collectors.toList());
+        // Call the service method with search parameters
+        Page<AuctionItem> auctionItems = auctionItemService.findByNameAndDescription(name, description, pageable);
+
+        // Convert the Page of auction items to a Page of DTOs
+        Page<AuctionItemDTO> auctionItemDTOs = auctionItems.map(item -> LabMapper.INSTANCE.getAuctionItemDTO(item));
 
         return ResponseEntity.ok(auctionItemDTOs); // Return the DTOs
     }
