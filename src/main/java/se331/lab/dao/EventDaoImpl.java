@@ -2,6 +2,7 @@ package se331.lab.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,8 @@ import se331.lab.entity.Event;
 import se331.lab.repository.EventRepository;
 
 @Repository
-@Primary
 @RequiredArgsConstructor
+
 public class EventDaoImpl implements EventDao {
     final EventRepository eventRepository;
     @Override
