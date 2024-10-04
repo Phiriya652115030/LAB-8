@@ -27,6 +27,7 @@ public class AuctionItemController {
     public ResponseEntity<Page<AuctionItemDTO>> getAllAuctionItems(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String description,
+            @RequestParam(required = false) Boolean successfulBid,
             Pageable pageable) {  // Add pagination
 
         // Call the service method with search parameters
