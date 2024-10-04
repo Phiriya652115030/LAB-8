@@ -21,6 +21,6 @@ public class AuctionItemDaoImpl implements AuctionItemDao {
 
     @Override
     public Page<AuctionItem> findByNameAndDescription(String name, String description, Pageable page) {
-        return auctionItemRepository.findByNameIgnoreCaseContainingAndDescriptionIgnoreCaseContaining(name, description, page);
+        return auctionItemRepository.findByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContaining(name, description, page);
     }
 }
