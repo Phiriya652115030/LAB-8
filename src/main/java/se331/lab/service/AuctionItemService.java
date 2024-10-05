@@ -18,6 +18,6 @@ public interface AuctionItemService {
     Page<AuctionItem> getAuctions(String name, Pageable pageable);
     Page<AuctionItem> getAuctions(Integer pageSize, Integer page);
     AuctionItem getAuctionById(Long id);
-    
+
 
 }

@@ -29,7 +29,7 @@ public class AuctionItemController {
             @RequestParam(value = "_limit", required = false) Integer perPage,
             @RequestParam(value = "_page", required = false) Integer page,
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "description", required = false) String description, Pageable pageable) {
+            @RequestParam(value = "description", required = false) String description) {
         perPage = perPage == null ? 1 : perPage;
         page = page == null ? 1 : page;
 
@@ -40,12 +40,12 @@ public class AuctionItemController {
             auctionItems = auctionItemService.getAuctions(name, PageRequest.of(page-1, perPage));
         }
 
+        System.out.println("AuctionItems: " + auctionItems.getContent());  // Log to verify the data
+
         HttpHeaders responseHeader = new HttpHeaders();
         responseHeader.set("X-Total-Count", String.valueOf(auctionItems.getTotalElements()));
 
-        return new
-                ResponseEntity<>(LabMapper.INSTANCE.getAuctionItemDTO(auctionItems.getContent())
-                , responseHeader, HttpStatus.OK);
+        return new ResponseEntity<>(LabMapper.INSTANCE.getAuctionItemDTO(auctionItems.getContent()), responseHeader, HttpStatus.OK);
     }
 
     @GetMapping("auctions/{id}")
