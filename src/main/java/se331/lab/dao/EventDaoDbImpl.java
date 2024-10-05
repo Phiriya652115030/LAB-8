@@ -10,10 +10,13 @@ import org.springframework.stereotype.Repository;
 import se331.lab.entity.Event;
 import se331.lab.repository.EventRepository;
 
-@Repository
-@RequiredArgsConstructor
+import java.util.List;
 
-public class EventDaoImpl implements EventDao {
+@Repository
+@Primary
+@RequiredArgsConstructor
+@Profile("db")
+public class EventDaoDbImpl implements EventDao {
     final EventRepository eventRepository;
     @Override
     public Integer getEventSize() {
@@ -37,6 +40,7 @@ public class EventDaoImpl implements EventDao {
 
     @Override
     public Page<Event> getEvents(String title, Pageable page) {
-        return eventRepository.findByTitleContainingOrDescriptionContaining(title, title, page);
+        return eventRepository.findByTitleIgnoreCaseContainingOrDescriptionIgnoreCaseContainingOrOrganizer_NameIgnoreCaseContaining(title, title, title, page);
     }
+
 }

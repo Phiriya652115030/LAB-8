@@ -1,18 +1,19 @@
 package se331.lab.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import se331.lab.entity.Event;
 
 import jakarta.annotation.PostConstruct;
 import se331.lab.service.EventService;
+import se331.lab.util.LabMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,26 +26,26 @@ public class EventController {
     @GetMapping("events")
     public ResponseEntity<?> getEventLists(
             @RequestParam(value = "_limit", required = false) Integer perPage,
-            @RequestParam(value = "_page", required = false) Integer page) {
-
-        // Getting the event size from the service
-        Integer eventSize = eventService.getEventSize();
-
-        // Setting default values if necessary
-        perPage = perPage == null ? eventSize : perPage;
+            @RequestParam(value = "_page", required = false) Integer page,
+            @RequestParam(value = "title", required = false) String title) {
+        perPage = perPage == null ? 1 : perPage;
         page = page == null ? 1 : page;
 
-        // Creating HttpHeaders to include the total count of events
-        HttpHeaders responseHeader = new HttpHeaders();
-        responseHeader.set("X-Total-Count", String.valueOf(eventSize));
-
-        try {
-            // Fetching paginated events from the service
-            List<Event> output = eventService.getEvents(perPage, page);
-            return new ResponseEntity<>(output, responseHeader, HttpStatus.OK);
-        } catch (IndexOutOfBoundsException ex) {
-            return new ResponseEntity<>(null, responseHeader, HttpStatus.NOT_FOUND);
+        Page<Event> pageOutput;
+        if (title == null) {
+            pageOutput = eventService.getEvents(perPage, page);
+        } else {
+            pageOutput = eventService.getEvents(title, PageRequest.of(page-1, perPage));
         }
+
+
+        
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("X-Total-Count", String.valueOf(pageOutput.getTotalElements()));
+
+        return new
+                ResponseEntity<>(LabMapper.INSTANCE.getEventDTO(pageOutput.getContent())
+                ,responseHeader, HttpStatus.OK);
     }
 
     @GetMapping("events/{id}")
@@ -52,9 +53,15 @@ public class EventController {
         // Fetching a single event by id using the service
         Event output = eventService.getEventById(id);
         if (output != null) {
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
         }
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<?> addEvent(@RequestBody Event event) {
+        Event output = eventService.save(event);
+        return ResponseEntity.ok(LabMapper.INSTANCE.getEventDTO(output));
     }
 }
