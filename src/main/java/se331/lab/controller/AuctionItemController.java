@@ -2,14 +2,16 @@ package se331.lab.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import se331.lab.entity.AuctionItem;
 import se331.lab.entity.AuctionItemDTO; // Import the AuctionItemDTO
+import se331.lab.entity.Event;
 import se331.lab.service.AuctionItemService;
 import se331.lab.util.LabMapper;
 
@@ -17,25 +19,46 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/auctions")
 @RequiredArgsConstructor
 public class AuctionItemController {
 
     final AuctionItemService auctionItemService; // Use a service for business logic
 
-    @GetMapping
-    public ResponseEntity<Page<AuctionItemDTO>> getAllAuctionItems(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) Boolean successfulBid,
-            Pageable pageable) {  // Add pagination
+    @GetMapping("auctions")
+    public ResponseEntity<?> getAllAuctionItems(
+            @RequestParam(value = "_limit", required = false) Integer perPage,
+            @RequestParam(value = "_page", required = false) Integer page,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "description", required = false) String description, Pageable pageable) {
+        perPage = perPage == null ? 1 : perPage;
+        page = page == null ? 1 : page;
 
-        // Call the service method with search parameters
-        Page<AuctionItem> auctionItems = auctionItemService.findByNameAndDescription(name, description, pageable);
+        Page<AuctionItem> auctionItems;
+        if (name == null) {
+            auctionItems = auctionItemService.getAuctions(perPage, page);
+        } else {
+            auctionItems = auctionItemService.getAuctions(name, PageRequest.of(page-1, perPage));
+        }
 
-        // Convert the Page of auction items to a Page of DTOs
-        Page<AuctionItemDTO> auctionItemDTOs = auctionItems.map(item -> LabMapper.INSTANCE.getAuctionItemDTO(item));
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.set("X-Total-Count", String.valueOf(auctionItems.getTotalElements()));
 
-        return ResponseEntity.ok(auctionItemDTOs); // Return the DTOs
+        return new
+                ResponseEntity<>(LabMapper.INSTANCE.getAuctionItemDTO(auctionItems.getContent())
+                , responseHeader, HttpStatus.OK);
     }
+
+    @GetMapping("auctions/{id}")
+    public ResponseEntity<?> getAuctions(@PathVariable("id") Long id) {
+        // Fetching a single event by id using the service
+        AuctionItem output = auctionItemService.getAuctionById(id);
+        if (output != null) {
+            return ResponseEntity.ok(LabMapper.INSTANCE.getAuctionItemDTO(output));
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The given id is not found");
+        }
+    }
+
+
+
 }
